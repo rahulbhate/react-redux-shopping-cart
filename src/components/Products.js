@@ -1,48 +1,31 @@
-import React, { useState, useEffect} from 'react';
-import Product from "./Product";
-import CartList from "./CartList";
-import { useLocalState } from './hooks';
+import React, { useContext } from "react";
+import { ProductsContext } from "../context";
 
-export const ProductContext = React.createContext();
-const Products = ({ products }) =>{
-    const [cart,setCart] = useState([]);
-    const [prod] = useState(products);
-   useEffect(() => {
-    const data = localStorage.getItem("MyCart");
-    if(data){
-      setCart(JSON.parse(data))
-    }
-    
-}, []);
-   useEffect(() => {
-    localStorage.setItem("MyCart", JSON.stringify(cart));
-   });
-   
-    const handleAddFunc = (product) =>{
-        const existingProduct = cart.filter(p => p.id === product.id);
-         if(existingProduct.length > 0){
-           const withoutExistingProduct = cart.filter(p => p.id !== product.id);
-           const updatedUnitsProduct = {
-             ...existingProduct[0],
-             units: existingProduct[0].units + product.units
-           }
-           setCart([...withoutExistingProduct, updatedUnitsProduct]);
-         }
-         else{
-           setCart([...cart, product]);
-         }
-       
-       }
-    return(
-        <>
-            {
-                prod.map(p => <Product key={p.id}  addFunc={handleAddFunc} {...p}/>)
-            }
-            <ProductContext.Provider value={[cart, setCart]}>
-                <CartList cart={cart} />
-            </ProductContext.Provider>
-        </>
-    )
-}
+const Products = props => {
+  const productsContext = useContext(ProductsContext);
+
+  const { products, addProductToCart } = productsContext;
+
+  return (
+   <>
+      {products.map(product => {
+        return (
+          <article className="mw5 center bg-white br3 pa3 pa4-ns mv3 ba b--black-10" id={product.id}>
+              <div className="tc">
+                <img src={product.img} className="br-100 h4 w4 dib ba b--black-05 pa2" title={product.name} alt="" />
+                <h1 className="f3 mb2">{product.name}</h1>
+                <h2 className="f5 fw4 gray mt0">{product.description}</h2>
+
+                <button className="f6 link dim br3 ph3 pv2 mb2 dib white bg-dark-green bn" onClick={() => addProductToCart(product)}>
+                    Add
+                </button>
+                <span>$ {product.price}</span>
+              </div>
+          </article>
+        );
+      })}
+    </>
+  );
+};
 
 export default Products;

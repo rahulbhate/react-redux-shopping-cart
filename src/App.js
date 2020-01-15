@@ -1,15 +1,19 @@
-import React from 'react';
+import React from "react";
 import './App.css';
+import { ProductsContextProvider } from "./context";
 import data from '../src/products';
-import Products from "./components/Products";
-function App() {
-
+import Products from "../src/components/Products";
+import CartList from "../src/components/CartList";
+const App = () => {
+  const products = data;
   return (
      <main className="pa3 pa5-ns flex flex-wrap">
-       <Products products={data}/>
-      </main>
-      
+      <ProductsContextProvider products={products}>
+          <Products />
+          <CartList />
+      </ProductsContextProvider>
+    </main>
   );
-}
+};
 
 export default App;
